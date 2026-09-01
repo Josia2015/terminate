@@ -1,0 +1,66 @@
+<meta charset="utf-8">
+<title>TRY TERMINATE ME</title>
+<style>
+  html,body{margin:0;height:100%;background:#000;overflow:hidden;cursor:crosshair}
+  canvas{position:fixed;inset:0;width:100%;height:100%;opacity:.55}
+  .wrap{position:fixed;inset:0;display:flex;flex-direction:column;align-items:center;
+        justify-content:center;gap:2vh;text-align:center;padding:4vw;box-sizing:border-box}
+  h1{
+    font-family:"Courier New",Consolas,monospace;font-weight:700;
+    font-size:clamp(1.6rem,8.5vw,10rem);line-height:1;letter-spacing:.04em;
+    color:#0f6;margin:0;white-space:nowrap;
+    text-shadow:0 0 6px #0f6,0 0 22px #0f6,0 0 60px #0a4,0 0 120px #063;
+    animation:flicker 4s infinite steps(1)
+  }
+  .cursor{animation:blink 1s infinite steps(1)}
+  .sub{font-family:"Courier New",monospace;color:#0a8;font-size:clamp(.7rem,2vw,1.4rem);
+       letter-spacing:.3em;text-shadow:0 0 8px #0a8;opacity:.8}
+  .scan{position:fixed;inset:0;pointer-events:none;
+        background:repeating-linear-gradient(#0000 0 2px,#00ff6611 2px 4px)}
+  .vig{position:fixed;inset:0;pointer-events:none;
+       background:radial-gradient(ellipse at center,#0000 40%,#000c 100%)}
+  @keyframes blink{0%,49%{opacity:1}50%,100%{opacity:0}}
+  @keyframes flicker{
+    0%,96%,100%{opacity:1}
+    96.5%{opacity:.3}97%{opacity:1}97.5%{opacity:.5}98%{opacity:1}
+  }
+</style>
+
+<canvas id="m"></canvas>
+<div class="wrap">
+  <h1>TRY TERMINATE ME<span class="cursor">_</span></h1>
+  <div class="sub">PROCESS 0x1337 &nbsp;·&nbsp; STATUS: IMMORTAL</div>
+</div>
+<div class="scan"></div>
+<div class="vig"></div>
+
+<script>
+const c = document.getElementById('m'), x = c.getContext('2d');
+const chars = 'アイウエオカキクケコサシスセソ0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ@#$%&*<>/\|';
+let cols, drops, size = 18;
+
+function resize(){
+  c.width = innerWidth; c.height = innerHeight;
+  size = Math.max(12, Math.round(innerWidth / 90));
+  cols = Math.ceil(c.width / size);
+  drops = Array.from({length: cols}, () => Math.random() * -50);
+}
+resize();
+addEventListener('resize', resize);
+
+function draw(){
+  x.fillStyle = 'rgba(0,0,0,0.08)';
+  x.fillRect(0, 0, c.width, c.height);
+  x.font = size + 'px monospace';
+  for (let i = 0; i < cols; i++){
+    const ch = chars[Math.floor(Math.random() * chars.length)];
+    const y = drops[i] * size;
+    x.fillStyle = Math.random() > 0.985 ? '#dfffe9' : '#00ff66';
+    x.fillText(ch, i * size, y);
+    if (y > c.height && Math.random() > 0.975) drops[i] = 0;
+    drops[i] += 0.6;
+  }
+  requestAnimationFrame(draw);
+}
+draw();
+</script>
